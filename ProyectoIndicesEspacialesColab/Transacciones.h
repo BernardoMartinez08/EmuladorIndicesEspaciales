@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include "Casilla.h"
+#include "Coordenada.h"
 
 using namespace std;
 
@@ -18,6 +20,9 @@ public:
 	vector<pedido> pedidos;
 
 	bool readOriginal(istream&, pedido&);
+	vector<coordenada> ordenarMuestra(vector<coordenada>, int);
+
+	vector<vector<coordenada>> generarCuadricula(vector<coordenada>, vector<coordenada>, int);
 private:
 
 };

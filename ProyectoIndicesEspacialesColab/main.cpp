@@ -26,6 +26,7 @@ int main() {
 		DelimTextBuffer delim('^', 1000);
 
 		transa.readOriginal(file, _pedidos);
+		_pedidos.print();
 		_pedidos.Write(fileE, delim);
 		registros++;
 	}

@@ -85,3 +85,106 @@ bool Transacciones::readOriginal(istream& stream, pedido& pedido) {
 
 	return stream.good();
 }
+
+void quickSortX(vector<coordenada>& _datos, int primero, int ultimo) {
+	int izquierda = primero;
+	int derecha = ultimo;
+	int centro = (derecha + izquierda) / 2;
+	int pivote = _datos[centro].coordenada_x;
+	int temp;
+
+	do {
+		while (_datos[izquierda].coordenada_x < pivote && izquierda - ultimo) {
+			++izquierda;
+		}
+
+		while (pivote < _datos[derecha].coordenada_x && derecha > primero) {
+			--derecha;
+		}
+
+		if (izquierda <= derecha) {
+			temp = _datos[izquierda].coordenada_x;
+			_datos[izquierda] = _datos[derecha];
+			_datos[derecha].coordenada_x = temp;
+			++izquierda;
+			--derecha;
+		}
+	} while (izquierda <= derecha);
+
+	if (primero <= derecha) {
+		quickSortX(_datos, primero, derecha);
+	}
+
+	if (ultimo > izquierda) {
+		quickSortX(_datos, izquierda, ultimo);
+	}
+}
+
+void quickSortY(vector<coordenada>& _datos, int primero, int ultimo) {
+	int izquierda = primero;
+	int derecha = ultimo;
+	int centro = (derecha + izquierda) / 2;
+	int pivote = _datos[centro].coordenada_y;
+	int temp;
+
+	do {
+		while (_datos[izquierda].coordenada_y < pivote && izquierda - ultimo) {
+			++izquierda;
+		}
+
+		while (pivote < _datos[derecha].coordenada_y && derecha > primero) {
+			--derecha;
+		}
+
+		if (izquierda <= derecha) {
+			temp = _datos[izquierda].coordenada_y;
+			_datos[izquierda] = _datos[derecha];
+			_datos[derecha].coordenada_y = temp;
+			++izquierda;
+			--derecha;
+		}
+	} while (izquierda <= derecha);
+
+	if (primero <= derecha) {
+		quickSortY(_datos, primero, derecha);
+	}
+
+	if (ultimo > izquierda) {
+		quickSortY(_datos, izquierda, ultimo);
+	}
+}
+
+void quickSort(vector<coordenada>& _datos, int casilla) {
+	if(casilla = 0)
+		quickSortX(_datos, 0, _datos.size() - 1);
+	else
+		quickSortY(_datos, 0, _datos.size() - 1);
+}
+
+vector<coordenada> Transacciones::ordenarMuestra(vector<coordenada> _muestra, int casilla) {
+	quickSort(_muestra, casilla);
+	return _muestra;
+}
+
+vector<vector<coordenada>> Transacciones::generarCuadricula(vector<coordenada> ordenadoX, vector<coordenada> ordenadoY, int cuadriculas) {
+	double  porcentaje = 0;
+	porcentaje = 100 / cuadriculas;
+	int valores = 10000 / cuadriculas;
+
+	vector<vector<casilla>> tabla;
+
+	for (double i = 0; i < 10000; i + valores) {
+		vector<casilla> fila;
+		for (double j = 0; j < 10000; j + valores) {
+			coordenada minimo(ordenadoX[j].coordenada_x, ordenadoY[i].coordenada_y, -1);
+			coordenada maximo(ordenadoX[(j + valores) - 1].coordenada_x, ordenadoY[(i + valores) - 1].coordenada_y, -1);
+
+			casilla aux;
+			aux.maximo = maximo;
+			aux.minimo = minimo;
+
+			fila.push_back(aux);
+		}
+		tabla.push_back(fila);
+	}
+}
