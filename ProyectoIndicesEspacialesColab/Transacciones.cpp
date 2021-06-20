@@ -1,7 +1,10 @@
 #include "Transacciones.h"
 
 Transacciones::Transacciones() {
-
+	pedidos = new vector<pedido>;
+	muestra = new vector<pedido>;
+	mainIndex = new vector<NodoIndex>;
+	gridIndex = new vector<vector<casilla>>;
 }
 
 bool Transacciones::readOriginal(istream& stream, pedido& pedido) {
@@ -155,7 +158,7 @@ void quickSortY(vector<coordenada>& _datos, int primero, int ultimo) {
 }
 
 void quickSort(vector<coordenada>& _datos, int casilla) {
-	if(casilla = 0)
+	if(casilla == 0)
 		quickSortX(_datos, 0, _datos.size() - 1);
 	else
 		quickSortY(_datos, 0, _datos.size() - 1);
@@ -166,12 +169,12 @@ vector<coordenada> Transacciones::ordenarMuestra(vector<coordenada> _muestra, in
 	return _muestra;
 }
 
-vector<vector<coordenada>> Transacciones::generarCuadricula(vector<coordenada> ordenadoX, vector<coordenada> ordenadoY, int cuadriculas) {
+bool Transacciones::generarCuadricula(vector<coordenada> ordenadoX, vector<coordenada> ordenadoY, int cuadriculas) {
 	double  porcentaje = 0;
 	porcentaje = 100 / cuadriculas;
 	int valores = 10000 / cuadriculas;
 
-	vector<vector<casilla>> tabla;
+	vector<vector<casilla>>* tabla = new vector<vector<casilla>>;
 
 	for (double i = 0; i < 10000; i + valores) {
 		vector<casilla> fila;
@@ -185,6 +188,61 @@ vector<vector<coordenada>> Transacciones::generarCuadricula(vector<coordenada> o
 
 			fila.push_back(aux);
 		}
-		tabla.push_back(fila);
+		tabla->push_back(fila);
 	}
+
+	if (!tabla->empty())
+		gridIndex = tabla;
+
+	return gridIndex->empty();
+}
+
+float Transacciones::calcularHipotenusa(coordenada _coordenada) {
+	float a = _coordenada.coordenada_x;
+	float b = _coordenada.coordenada_y;
+
+	float c = sqrt(pow(a,2) + pow(b,2));
+	return c;
+}
+
+void Transacciones::agregarMainIndex(int _id_pedido, long _posicion) {
+	NodoIndex nuevo(_id_pedido, _posicion);
+
+	mainIndex->push_back(nuevo);
+}
+
+void Transacciones::agregarGridIndex(float _x, float _y, int _id_pedido) {
+	coordenada nuevo(_x, _y, _id_pedido);
+
+	for (int i = 0; i < gridIndex->size(); i++) {
+		for (int j = 0; j < gridIndex->at(i).size(); j++) {
+			if (_x >= gridIndex->at(i).at(j).minimo.coordenada_x && _x <= gridIndex->at(i).at(j).maximo.coordenada_x) {
+				if (_y >= gridIndex->at(i).at(j).minimo.coordenada_y && _y <= gridIndex->at(i).at(j).maximo.coordenada_y) {
+					gridIndex->at(i).at(j).pedidos->push_back(nuevo);
+				}
+			}
+		}
+	}
+}
+
+void Transacciones::guardarMainIndex() {
+	ofstream indicePrincipal(fileIndicePrincipal, ios::out | ios::app | ios::binary);
+	for (int i = 0; i < mainIndex->size(); i++) {
+		indicePrincipal << mainIndex->at(i);
+	}
+	indicePrincipal.close();
+}
+
+void Transacciones::guardarGridIndex() {
+	ofstream indiceSecundario(fileIndiceCoordenadas, ios::out | ios::app | ios::binary);
+	for (int i = 0; i < gridIndex->size(); i++) {
+		for (int j = 0; j < gridIndex->at(i).size(); j++) {
+			for (int k = 0; k < gridIndex->at(i).at(j).pedidos->size(); k++) {
+				indiceSecundario << gridIndex->at(i).at(j).pedidos->at(k);
+			}
+			indiceSecundario << "/";
+		}
+		indiceSecundario << "^";
+	}
+	indiceSecundario.close();
 }

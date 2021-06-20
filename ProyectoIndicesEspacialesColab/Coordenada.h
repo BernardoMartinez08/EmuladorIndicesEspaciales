@@ -16,10 +16,10 @@ class coordenada {
 	friend istream& operator>>(istream&, coordenada&);
 public:
 	coordenada();
-	coordenada(int,int,int);
+	coordenada(float,float,int);
 
-	int coordenada_x;
-	int coordenada_y;
+	float coordenada_x;
+	float coordenada_y;
 	int id_pedido;
 };
 

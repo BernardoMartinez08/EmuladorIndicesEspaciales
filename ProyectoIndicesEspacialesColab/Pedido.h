@@ -38,6 +38,7 @@ public:
 	float coordenada_pedido_x;
 	float coordenada_pedido_y;
 	bool estado;
+	long posicion;
 };
 
 #endif // !PEDIDO_H

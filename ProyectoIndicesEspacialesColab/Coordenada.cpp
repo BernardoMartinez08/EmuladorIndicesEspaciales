@@ -6,7 +6,7 @@ coordenada::coordenada() {
 	id_pedido = -1;
 }
 
-coordenada::coordenada(int _x, int _y, int _k) {
+coordenada::coordenada(float _x, float _y, int _k) {
 	coordenada_x = _x;
 	coordenada_y = _y;
 	id_pedido = _k;
@@ -29,12 +29,12 @@ istream& operator>>(istream& stream, coordenada& data) {
 	//Coordenada X
 	char _CX[8];
 	stream.getline(_CX, 8, ',');
-	data.coordenada_x = atoi(_CX);
+	data.coordenada_x = atof(_CX);
 
 	//Coordenada Y
 	char _CY[8];
 	stream.getline(_CY, 8, ',');
-	data.coordenada_y = atoi(_CY);
+	data.coordenada_y = atof(_CY);
 
 	//ID del pedido
 	char _id[8];

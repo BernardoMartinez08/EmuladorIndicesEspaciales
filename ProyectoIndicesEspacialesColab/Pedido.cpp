@@ -16,6 +16,7 @@ pedido::pedido() {
 	coordenada_pedido_x = 0;
 	coordenada_pedido_y = 0;
 	estado = 0;
+	posicion = 0;
 }
 
 void pedido::print() {
