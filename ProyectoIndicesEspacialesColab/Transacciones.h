@@ -44,6 +44,9 @@ public:
 
 	void guardarMainIndex();
 	void guardarGridIndex();
+
+	void cargarMainIndex();
+	void cargarGridIndex();
 };
 
 #endif // !TRANSACCIONES_H

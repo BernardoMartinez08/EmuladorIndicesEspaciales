@@ -176,19 +176,35 @@ bool Transacciones::generarCuadricula(vector<coordenada> ordenadoX, vector<coord
 
 	vector<vector<casilla>>* tabla = new vector<vector<casilla>>;
 
-	for (double i = 0; i < 10000; i + valores) {
+	int i = 0, j = 0;
+	while(i < ordenadoX.size()) {
 		vector<casilla> fila;
-		for (double j = 0; j < 10000; j + valores) {
+		j = 0;
+		while (j < ordenadoX.size()) {
 			coordenada minimo(ordenadoX[j].coordenada_x, ordenadoY[i].coordenada_y, -1);
-			coordenada maximo(ordenadoX[(j + valores) - 1].coordenada_x, ordenadoY[(i + valores) - 1].coordenada_y, -1);
+			coordenada maximo;
+			if ((j + valores) < ordenadoX.size() && (i + valores) < ordenadoX.size()) {
+				maximo.coordenada_x = ordenadoX[(j + valores) - 1].coordenada_x;
+				maximo.coordenada_y = ordenadoY[(i + valores) - 1].coordenada_y;
+				maximo.id_pedido = -1;
+				//maximo(ordenadoX[(j + valores) - 1].coordenada_x, ordenadoY[(i + valores) - 1].coordenada_y, -1);
+			}else {
+				maximo.coordenada_x = ordenadoX[ordenadoX.size() - 1].coordenada_x;
+				maximo.coordenada_y = ordenadoY[ordenadoX.size() - 1].coordenada_y;
+				maximo.id_pedido = -1;
+				//maximo(ordenadoX[ordenadoX.size() - 1].coordenada_x, ordenadoY[ordenadoX.size() - 1].coordenada_y, -1);
+			}
 
 			casilla aux;
 			aux.maximo = maximo;
 			aux.minimo = minimo;
 
 			fila.push_back(aux);
+			j = j + valores;
 		}
+
 		tabla->push_back(fila);
+		i = i + valores;
 	}
 
 	if (!tabla->empty())
@@ -236,13 +252,49 @@ void Transacciones::guardarMainIndex() {
 void Transacciones::guardarGridIndex() {
 	ofstream indiceSecundario(fileIndiceCoordenadas, ios::out | ios::app | ios::binary);
 	for (int i = 0; i < gridIndex->size(); i++) {
+		indiceSecundario << gridIndex->at(i).size();
 		for (int j = 0; j < gridIndex->at(i).size(); j++) {
+			indiceSecundario << gridIndex->at(i).at(j).pedidos->size();
 			for (int k = 0; k < gridIndex->at(i).at(j).pedidos->size(); k++) {
 				indiceSecundario << gridIndex->at(i).at(j).pedidos->at(k);
 			}
-			indiceSecundario << "/";
 		}
-		indiceSecundario << "^";
+	}
+	indiceSecundario.close();
+}
+
+void Transacciones::cargarMainIndex() {
+	ifstream indicePrincipal(fileIndicePrincipal, ios::in | ios::binary);
+	mainIndex = new vector<NodoIndex>;
+	while (!indicePrincipal.eof()) {
+		NodoIndex nuevo;
+		indicePrincipal >> nuevo;
+		mainIndex->push_back(nuevo);
+	}
+	indicePrincipal.close();
+}
+
+void Transacciones::cargarGridIndex() {
+	ifstream indiceSecundario(fileIndiceCoordenadas, ios::in | ios::binary);
+	gridIndex = new vector<vector<casilla>>;
+	int filas = 0, columnas = 0;
+
+	char _filas[8];
+	indiceSecundario.getline(_filas, 8, ',');
+	filas = atoi(_filas);
+
+	for (int i = 0; i < filas; i++) {
+		char _columnas[8];
+		indiceSecundario.getline(_columnas, 8, ',');
+		columnas = atoi(_columnas);
+
+		vector<casilla> fila;
+		for (int j = 0; j < columnas; j++) {
+			casilla nueva;
+			indiceSecundario >> nueva;
+			fila.push_back(nueva);
+		}
+		gridIndex->push_back(fila);
 	}
 	indiceSecundario.close();
 }

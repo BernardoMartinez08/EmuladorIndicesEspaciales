@@ -12,8 +12,8 @@ int main() {
 	while (opcionPrincipal != 6) {
 		cout << "\n\t**** INDIZADO DE DATOS ESPACIALES *********\n\n";
 
-		cout << "1. Importar archivo de transacciones.\n2. Generar índice espacial de transacciones.\n"
-			<< "3. Guardar índice espacial.\n4. Cargar índice espacial.\n5. Consultar transacciones.\n6. Salir."
+		cout << "1. Importar archivo de transacciones.\n2. Generar indice espacial de transacciones.\n"
+			<< "3. Guardar indice espacial.\n4. Cargar indice espacial.\n5. Consultar transacciones.\n6. Salir."
 			<< "\nIngrese una opcion:";
 		cin >> opcionPrincipal;
 
@@ -44,7 +44,7 @@ int main() {
 
 			char titulos[256];
 			file.getline(titulos, 256, '\n');
-			cout << "Titulos: " << titulos;
+			cout << "\nRecuperado y Copiando los Registros........";
 
 			while (!file.eof()) {
 				pedido _pedidos;
@@ -71,10 +71,22 @@ int main() {
 
 			float tiempoTotal = 0;
 			string pathOrigen = " ";
+			string nameMainIndex = " ";
+			string nameGridIndex = " ";
 
 			cout << "\nIngrese el nombre del archivo que contiene las transacciones:";
 			cin >> pathOrigen;
 
+			cout << "\nIngrese un nombre para el archivo de indice principal:";
+			cin >> nameMainIndex;
+
+			cout << "\nIngrese un nombre para el archivo de indice principal:";
+			cin >> nameGridIndex;
+
+			Manager.fileIndicePrincipal = nameMainIndex;
+			Manager.fileIndiceCoordenadas = nameGridIndex;
+
+			cout << "\nRecuperado los Registros......";
 			int registros = 0;
 			ifstream file(pathOrigen, ios::in);
 			
@@ -83,15 +95,15 @@ int main() {
 
 			start = std::chrono::steady_clock::now();
 
-			while (!file.eof()) {
+			while (registros <= 300000) {
 				pedido _pedido;
-				DelimTextBuffer delim('^', 1000);
+				DelimTextBuffer delim('^', 5000);
 
 				_pedido.posicion = file.tellg();
 				_pedido.Read(file,delim);
 				Manager.pedidos->push_back(_pedido);
 
-				if (registros >= 500000 && registros <= 510000)
+				if (registros >= 50000 && registros < 60000)
 					Manager.muestra->push_back(_pedido);
 
 				registros++;
@@ -138,7 +150,7 @@ int main() {
 			cout << "\nIngrese el casillas del grid:";
 			cin >> numCasillas;
 
-			if (Manager.generarCuadricula(ordenadaX, ordenadaY, numCasillas))
+			if (!Manager.generarCuadricula(ordenadaX, ordenadaY, numCasillas))
 				cout << "\n\n***Se Genero la Cuadricula***";
 			else
 				cout << "\n\n***Hubo un problema para generar la cuadricula***";
